@@ -11,7 +11,7 @@
   "samples": [
     {
       "displayName": "Example Scene",
-      "description": "Simple Test Scene to show how to place/delete game objects.",
+      "description": "Simple Test Scene example to show how to place/delete game objects.",
       "path": "Samples~/Simple"
     }
   ]
