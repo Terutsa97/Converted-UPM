@@ -1,3 +1,5 @@
+[![CI](https://github.com/Terutsa97/Converted-UPM/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Terutsa97/Converted-UPM/actions/workflows/ci.yml)
+
 # Converted-UPM
 This repository contains a set of scripts that have been converted to the UPM format.
 
