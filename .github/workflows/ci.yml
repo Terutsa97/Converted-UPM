@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - "Packages/*"
+      - "Packages/**"
 jobs:
   split-upm:
     name: "Split upm for each package"
