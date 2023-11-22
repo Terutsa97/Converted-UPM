@@ -1,4 +1,4 @@
-split-upm-branch:
+anchor: &split-upm-branch:
   name: Split up ${BRANCH_NAME}
   run: |
     git log -1
