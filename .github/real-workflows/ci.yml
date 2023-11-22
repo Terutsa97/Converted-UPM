@@ -1,0 +1,29 @@
+split-upm-branch:
+  name: Split up ${BRANCH_NAME}
+  run: |
+    git log -1
+    git subtree split -P "$PKG_ROOT" -b $BRANCH_NAME
+    git push -u origin $BRANCH_NAME
+  env:
+    PKG_ROOT: ""
+    BRANCH_NAME: ""
+
+---
+
+name: CI
+on:
+  push:
+    branches:
+      - main
+jobs:
+  split-upm-:
+    name: "Split upm for each package"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - <<: *split-upm-branch
+        env:
+          PKG_ROOT: "Packages/com.terutsa97.game-object-brush"
+          BRANCH_NAME: "upm-go-brush"
