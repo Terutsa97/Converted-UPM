@@ -1,4 +1,5 @@
-anchor: &split-upm-branch:
+anchors:
+- &split-upm-branch
   name: Split up ${BRANCH_NAME}
   run: |
     git log -1
@@ -18,7 +19,7 @@ on:
     paths:
       - "Packages/*"
 jobs:
-  split-upm-:
+  split-upm:
     name: "Split upm for each package"
     runs-on: ubuntu-latest
     steps:
