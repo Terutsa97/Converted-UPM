@@ -1,5 +1,13 @@
 {
   "dependencies": {
+    "com.terutsa97.folder-utilities": {
+      "version": "file:com.terutsa97.folder-utilities",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.xsduan.hierarchy-folders": "0.3.1"
+      }
+    },
     "com.terutsa97.game-object-brush": {
       "version": "file:com.terutsa97.game-object-brush",
       "depth": 0,
@@ -22,6 +30,13 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.settings-manager": {
+      "version": "2.0.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.test-framework": {
       "version": "1.1.33",
       "depth": 1,
@@ -32,6 +47,15 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.xsduan.hierarchy-folders": {
+      "version": "https://github.com/xsduan/unity-hierarchy-folders.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.settings-manager": "1.0.1"
+      },
+      "hash": "0815a8037c4262926343faf01a4be00d562c5dd4"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

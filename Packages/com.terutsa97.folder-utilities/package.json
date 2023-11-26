@@ -1,0 +1,18 @@
+{
+  "name": "com.terutsa97.folder-utilities",
+  "displayName": "Folder Utilities",
+  "description": "Shared utilities for dealing with folders. Requires xsduan's folder system which can be found here: https://github.com/xsduan/unity-hierarchy-folders.git#v0.3.1",
+  "version": "0.0.1",
+  "unity": "2018.3",
+  "author": {
+    "name": "Terutsa97",
+    "email": "angelspth1997@gmail.com"
+  },
+  "dependencies": {
+    "com.xsduan.hierarchy-folders": "0.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+[URL]https://github.com/Terutsa97/Converted-UPM.git#upm-folder-utilities[/URL]"
+  }
+}
