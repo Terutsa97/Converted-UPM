@@ -6,3 +6,4 @@ Utilities for dealing with folders.
 - Convert a folder to an empty object
 - Create a folder based on a selection of objects
 - Merge a selection of folders together
+- Sort folder contents

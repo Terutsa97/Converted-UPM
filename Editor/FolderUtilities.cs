@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,11 +13,13 @@ namespace Terutsa97.FolderUtilities
     public static class FolderUtilities
     {
         const string PARENT_FOLDER = "GameObject/Folder Utilities/";
+        const int PRIORITY = 1;
+
         static int s_processedItemCount = 0;
 
         #region Convert Empty To Folder
         const string CONVERT_EMPTY_NAME = "Convert Empty To Folder";
-        [MenuItem(PARENT_FOLDER + CONVERT_EMPTY_NAME, false, 1)]
+        [MenuItem(PARENT_FOLDER + CONVERT_EMPTY_NAME, false, PRIORITY)]
         public static void ConvertEmptyToFolder(MenuCommand command)
         {
             var selectedParent = ((GameObject)command.context).transform;
@@ -45,6 +47,7 @@ namespace Terutsa97.FolderUtilities
                 i++;
             }
 
+            newFolder.name = selectedParent.name;
             Undo.DestroyObjectImmediate(selectedParent.gameObject);
             Selection.activeTransform = newFolder.transform;
 
@@ -62,7 +65,7 @@ namespace Terutsa97.FolderUtilities
 
         #region Convert Folder To Empty
         const string CONVERT_FOLDER_NAME = "Convert Folder To Empty";
-        [MenuItem(PARENT_FOLDER + CONVERT_FOLDER_NAME, false, 1)]
+        [MenuItem(PARENT_FOLDER + CONVERT_FOLDER_NAME, false, PRIORITY)]
         public static void ConvertFolderToEmpty(MenuCommand command)
         {
             var selectedParent = ((GameObject)command.context).transform;
@@ -90,6 +93,7 @@ namespace Terutsa97.FolderUtilities
                 i++;
             }
 
+            newEmpty.name = selectedParent.name;
             Undo.DestroyObjectImmediate(selectedParent.gameObject);
             Selection.activeTransform = newEmpty.transform;
 
@@ -105,7 +109,7 @@ namespace Terutsa97.FolderUtilities
         #region Create Folder From Selection
         const string FOLDER_FROM_SELECTION = "Create A Folder From Selection";
 
-        [MenuItem(PARENT_FOLDER + FOLDER_FROM_SELECTION, false, 1)]
+        [MenuItem(PARENT_FOLDER + FOLDER_FROM_SELECTION, false, PRIORITY)]
         public static void CreateFolderFromSelection()
         {
             var selectedObjects = Selection.transforms;
@@ -148,7 +152,7 @@ namespace Terutsa97.FolderUtilities
         #region Merge Folders Together
         const string MERGE_FOLDERS_NAME = "Merge Folders";
 
-        [MenuItem(PARENT_FOLDER + MERGE_FOLDERS_NAME, false, 1)]
+        [MenuItem(PARENT_FOLDER + MERGE_FOLDERS_NAME, false, PRIORITY)]
         public static void MergeFoldersTogether()
         {
             var selectedObjects = Selection.transforms;
@@ -193,18 +197,60 @@ namespace Terutsa97.FolderUtilities
 
         [MenuItem(PARENT_FOLDER + MERGE_FOLDERS_NAME, true)]
         static bool Validate_MergeFoldersTogether()
-            => Selection.transforms.Length != 0 
-            & Selection.transforms.All(s => s.GetComponent<Folder>() != null);
+            => Selection.transforms.Length > 1 
+            && Selection.transforms.All(s => s.GetComponent<Folder>() != null);
         #endregion
 
-        #region Sort Folders A-Z
-        // TODO: Make Ability to Sort Folders...
-        //const string SORT_FOLDERS_NAME = "Sort Folders [A-Z]";
+        #region Folder Sorting
+        const string SORT_FOLDERS_NAME = "Sort Folders";
 
-        //[MenuItem(PARENT_FOLDER + SORT_FOLDERS_NAME, false, 1)]
-        //public static void SortFolder()
-        //{
-        //}
+        [MenuItem(PARENT_FOLDER + SORT_FOLDERS_NAME + " [A-Z]", false, PRIORITY)]
+        public static void SortFolderAZ()
+            => SortWithAction((tl) => tl
+                .OrderBy(t => t.name)
+                .Reverse());
+
+        [MenuItem(PARENT_FOLDER + SORT_FOLDERS_NAME + " [A-Z]", true)]
+        static bool Validate_SortFolderAZ()
+            => Selection.activeTransform != null
+            && Selection.activeTransform.GetComponent<Folder>() != null;
+
+        [MenuItem(PARENT_FOLDER + SORT_FOLDERS_NAME + " [Z-A]", false, PRIORITY)]
+        public static void SortFolderZA()
+            => SortWithAction((tl) => tl
+                .OrderBy(t => t.name));
+
+        [MenuItem(PARENT_FOLDER + SORT_FOLDERS_NAME + " [Z-A]", true)]
+        static bool Validate_SortFolderZA()
+            => Selection.activeTransform != null
+            && Selection.activeTransform.GetComponent<Folder>() != null;
+
+        static void SortWithAction(Func<IEnumerable<Transform>, IEnumerable<Transform>> action)
+        {
+            var selectedObjects = Selection.transforms;
+
+            if (s_processedItemCount < selectedObjects.Length - 1)
+            {
+                s_processedItemCount++;
+                return;
+            }
+
+            s_processedItemCount = 0;
+
+            Undo.IncrementCurrentGroup();
+
+            foreach (var selectedObject in selectedObjects)
+            {
+                var clonedList = new List<Transform>();
+                foreach (Transform obj in selectedObject) { clonedList.Add(obj); }
+                foreach (Transform obj in action(clonedList))
+                {
+                    Undo.SetSiblingIndex(obj, 0, "Move index for: " + obj.name);
+                }
+            }
+
+            Undo.SetCurrentGroupName("Reset Parent Transform");
+        }
         #endregion
 
         #region Helper Methods
