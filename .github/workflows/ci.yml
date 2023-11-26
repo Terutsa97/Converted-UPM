@@ -22,3 +22,11 @@ jobs:
         env:
           PKG_ROOT: "Packages/com.terutsa97.game-object-brush"
           BRANCH_NAME: "upm-go-brush"
+      - name: Split up ${BRANCH_NAME}
+        run: |
+          git log -1
+          git subtree split -P "$PKG_ROOT" -b $BRANCH_NAME
+          git push -u origin $BRANCH_NAME
+        env:
+          PKG_ROOT: "Packages/com.terutsa97.folder-utilities"
+          BRANCH_NAME: "upm-folder-utilities"
