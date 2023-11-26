@@ -31,3 +31,7 @@ jobs:
         env:
           PKG_ROOT: "Packages/com.terutsa97.game-object-brush"
           BRANCH_NAME: "upm-go-brush"
+      - <<: *split-upm-branch
+        env:
+          PKG_ROOT: "Packages/com.terutsa97.folder-utilities"
+          BRANCH_NAME: "upm-folder-utilities"
