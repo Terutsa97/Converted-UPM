@@ -23,3 +23,4 @@ https://github.com/Terutsa97/Converted-UPM.git#<git branch stub>
 | Name                            | Author     | Version | Git Branch Stub
 |---------------------------------|------------|---------|-----------------
 | com.terutsa97.game-object-brush | @Terutsa97 | 4.0.0   | #upm-go-brush
+| com.terutsa97.folder-utilities  | @Terutsa97 | 0.0.1   | #upm-folder-utilities
