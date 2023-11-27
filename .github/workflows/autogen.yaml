@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - ".github/real-workflows/*.yml"
+  workflow_dispatch:
 jobs:
   generate-workflows:
     runs-on: ubuntu-latest
