@@ -18,6 +18,7 @@ on:
       - main
     paths:
       - "Packages/**"
+  workflow_call:
 jobs:
   split-upm:
     name: "Split upm for each package"
