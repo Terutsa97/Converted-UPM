@@ -13,7 +13,5 @@ jobs:
         uses: 'DanySK/true-yaml-actions@1.0.3' # pick the latest version maybe
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
-      - name: Run newly created workflow
-        uses: 'Terutsa97/Converted-UPM/.github/workflows/ci.yml@main'
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
+  run-ci:
+    uses: 'Terutsa97/Converted-UPM/.github/workflows/ci.yml@main'
