@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
+
 using UnityEditor;
-using UnityEditor.PackageManager.UI;
+
+using UnityEngine;
 
 namespace Terutsa97.GameObjectBrush
 {
@@ -13,7 +14,7 @@ namespace Terutsa97.GameObjectBrush
         #region Properties
         static BrushCollection.BrushCollectionList? s_brushCollectionList;
 
-        static string version = "v4.0.0";
+        static string version = "v4.0.1";
 
         public static Color red = ColorFromRGB(239, 80, 80);
         public static Color green = ColorFromRGB(93, 173, 57);
@@ -27,6 +28,8 @@ namespace Terutsa97.GameObjectBrush
 
         public BrushCollection brushes;
         public int selectedBrushCollectionIndex = 0;
+
+        float _zoomValue = 100;
 
         Vector2 _scrollViewScrollPosition = new();
         BrushObject _copy = null;
@@ -174,7 +177,7 @@ namespace Terutsa97.GameObjectBrush
             //scroll view
             _scrollViewScrollPosition = EditorGUILayout.BeginScrollView(_scrollViewScrollPosition, false, false);
             int rowLength = 1;
-            int maxRowLength = Mathf.FloorToInt((this.position.width - 35) / 100);
+            int maxRowLength = Mathf.FloorToInt((this.position.width - 35) / _zoomValue);
             if (maxRowLength < 1)
             {
                 maxRowLength = 1;
@@ -211,9 +214,11 @@ namespace Terutsa97.GameObjectBrush
                     }
                 }
 
+                EditorGUILayout.BeginVertical(GUILayout.Width(1));
+
                 //Create the brush entry in the scroll view and check if the user clicked on the created button (change the currently selected/edited brush accordingly and add it to the current brushes if possible)
                 GUIContent btnContent = new GUIContent(AssetPreview.GetAssetPreview(brObj.brushObject), brObj.brushObject.name);
-                if (GUILayout.Button(btnContent, GUILayout.Width(100), GUILayout.Height(100)))
+                if (GUILayout.Button(btnContent, GUILayout.Width(_zoomValue), GUILayout.Height(_zoomValue)))
                 {
                     //Add and remove brushes from the current brushes list
                     if (Event.current.control && !brushes.selectedBrushes.Contains(brObj))
@@ -234,6 +239,9 @@ namespace Terutsa97.GameObjectBrush
                     }
                 }
 
+                brObj.brushObject = (GameObject)EditorGUILayout.ObjectField(brObj.brushObject, typeof(GameObject), false, GUILayout.Width(_zoomValue));
+                EditorGUILayout.EndVertical();
+
                 GUI.backgroundColor = guiColor;
                 rowLength++;
             }
@@ -251,7 +259,7 @@ namespace Terutsa97.GameObjectBrush
             }
 
             //add button
-            if (GUILayout.Button("+", GUILayout.Width(100), GUILayout.Height(100)))
+            if (GUILayout.Button("+", GUILayout.Width(_zoomValue), GUILayout.Height(_zoomValue)))
             {
                 AddObjectPopup.Init(brushes.Brushes, this);
             }
@@ -260,6 +268,8 @@ namespace Terutsa97.GameObjectBrush
             //end horizontal and scroll view again
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndScrollView();
+
+            _zoomValue = EditorGUILayout.Slider("Zoom", _zoomValue, 50, 200);
             #endregion
 
             #region Actions Group
