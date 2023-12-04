@@ -419,7 +419,7 @@ namespace Terutsa97.GameObjectBrush
                 brushes.primarySelectedBrush.maxSlope = EditorGUILayout.FloatField(brushes.primarySelectedBrush.maxSlope);
                 EditorGUILayout.EndHorizontal();
 
-                SerializedProperty sp = serializedObject_brushObject.FindProperty("primarySelectedBrush").FindPropertyRelative("layerFilter");
+                SerializedProperty sp = serializedObject_brushObject?.FindProperty("primarySelectedBrush").FindPropertyRelative("layerFilter");
 
                 EditorGUILayout.BeginHorizontal();
                 brushes.primarySelectedBrush.isTagFilteringEnabled = EditorGUILayout.Toggle("Enable Tag Filtering", brushes.primarySelectedBrush.isTagFilteringEnabled);
@@ -432,7 +432,7 @@ namespace Terutsa97.GameObjectBrush
                 EditorGUILayout.Space();
                 EditorGUILayout.Space();
 
-                serializedObject_brushObject.ApplyModifiedProperties();
+                serializedObject_brushObject?.ApplyModifiedProperties();
             }
 
             //save AssetDatabase on any change
