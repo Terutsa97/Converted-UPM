@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using UnityEditor;
 
@@ -14,7 +15,7 @@ namespace Terutsa97.GameObjectBrush
         #region Properties
         static BrushCollection.BrushCollectionList? s_brushCollectionList;
 
-        static string version = "v4.0.1";
+        static string version = "v4.1.0";
 
         public static Color red = ColorFromRGB(239, 80, 80);
         public static Color green = ColorFromRGB(93, 173, 57);
@@ -317,17 +318,34 @@ namespace Terutsa97.GameObjectBrush
 
             if (brushes.selectedBrushes.Count > 0)
             {
+                var selectedBrushPrefabs = brushes.selectedBrushes
+                    .Select(x => x.brushObject);
+                
+                var filteredList = Selection.gameObjects
+                    .Except(brushes.spawnedObjects)
+                    .Where(x => selectedBrushPrefabs.Contains(PrefabUtility.GetCorrespondingObjectFromOriginalSource(x)))
+                    .ToList();
+
+                EditorGUI.BeginDisabledGroup(filteredList.Count == 0);
+                GUI.backgroundColor = green;
+                if (GUILayout.Button(new GUIContent($"Add Selected GameObjects to the brush list ({filteredList.Count})", "Adds the selected objects to the tracked brush list.")))
+                {
+                    brushes.spawnedObjects.AddRange(filteredList);
+                }
+
+                EditorGUI.EndDisabledGroup();
+
                 EditorGUI.BeginDisabledGroup(brushes.spawnedObjects.Count == 0);
 
                 GUI.backgroundColor = green;
-                if (GUILayout.Button(new GUIContent("Permanently Apply Spawned GameObjects (" + brushes.spawnedObjects.Count + ")", "Permanently apply the gameobjects that have been spawned with GO brush, so they can not be erased by accident anymore.")))
+                if (GUILayout.Button(new GUIContent($"Clear All Spawned GameObjects from brush list ({brushes.spawnedObjects.Count})", "Permanently apply the gameobjects that have been spawned with GO brush, so they can not be erased by accident anymore.")))
                 {
                     brushes.ApplyCachedObjects();
                     _lastPlacementPositions.Clear();
                 }
 
                 GUI.backgroundColor = red;
-                if (GUILayout.Button(new GUIContent("Remove All Spawned GameObjects (" + brushes.spawnedObjects.Count + ")", "Removes all spawned objects from the scene that have not been applied before.")) && RemoveAllCachedObjects_Dialog(brushes.spawnedObjects.Count))
+                if (GUILayout.Button(new GUIContent($"Remove All Spawned GameObjects ({brushes.spawnedObjects.Count})", "Removes all spawned objects from the scene that have not been applied before.")) && RemoveAllCachedObjects_Dialog(brushes.spawnedObjects.Count))
                 {
                     brushes.DeleteSpawnedObjects();
                     _lastPlacementPositions.Clear();
