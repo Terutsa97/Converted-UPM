@@ -2,7 +2,7 @@
   "name": "com.terutsa97.game-object-brush",
   "displayName": "GameObject-Brush",
   "description": "A simple editor extension for the Unity game engine. It allows you to paint prefabs and gameobjects.",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "unity": "2018.3",
   "author": {
     "name": "Terutsa97, Originally by Kellojo",
