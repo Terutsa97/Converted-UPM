@@ -1,0 +1,21 @@
+{
+    "name": "Terutsa97.ProBuilderUtilities.Editor",
+    "rootNamespace": "Terutsa97.ProBuilderUtilities.Editor",
+    "references": [
+        "GUID:1826c0224c0d048b88112c79bbb0cd85",
+        "GUID:03ca3ee4acaf74592bc6d299ca86aa27",
+        "GUID:97a0897eb1d9f534499ad443f6b47d18",
+        "GUID:76feaab15fb5e4547bcc485748e2553c"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,18 @@
+{
+  "name": "com.terutsa97.probuilder-utilities",
+  "displayName": "ProBuilder Utilities",
+  "description": "Shared Utilities for dealing with ProBuilder.",
+  "version": "0.0.1",
+  "unity": "2018.3",
+  "author": {
+    "name": "Terutsa97",
+    "email": "angelspth1997@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+[URL]https://github.com/Terutsa97/Converted-UPM.git#upm-folder-utilities[/URL]"
+  },
+  "dependencies": {
+    "com.unity.probuilder": "5.2.0"
+  }
+}
