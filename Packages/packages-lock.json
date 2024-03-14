@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.prenominal.realtimecsg": {
+      "version": "https://github.com/LogicalError/realtime-CSG-for-unity.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "9a39f85a198b9cbcb2fcb06e671ae10a9d51cf4e"
+    },
     "com.terutsa97.folder-utilities": {
       "version": "file:com.terutsa97.folder-utilities",
       "depth": 0,
@@ -14,6 +21,14 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.terutsa97.probuilder-utilities": {
+      "version": "file:com.terutsa97.probuilder-utilities",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.probuilder": "5.2.0"
+      }
+    },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
       "depth": 2,
@@ -27,6 +42,17 @@
       "source": "registry",
       "dependencies": {
         "com.unity.test-framework": "1.1.9"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.probuilder": {
+      "version": "5.2.2",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.settings-manager": "1.0.3",
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
