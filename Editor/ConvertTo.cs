@@ -14,6 +14,7 @@ using System.Linq;
 
 using Shape = RealtimeCSG.Legacy.Shape;
 using UnityEngine.WSA;
+using UnityEngine.ProBuilder.Shapes;
 
 namespace Terutsa97.ProBuilderUtilities.Editor
 {
@@ -23,7 +24,6 @@ namespace Terutsa97.ProBuilderUtilities.Editor
         const int PRIORITY = 1;
 
         #region Convert ProBuilder to CSG
-
         const string CONVERT_PROBUILDER_TO_CSG = "Convert to CSG Brush";
 
         [MenuItem(PARENT_FOLDER + CONVERT_PROBUILDER_TO_CSG, false, PRIORITY)]
@@ -54,9 +54,10 @@ namespace Terutsa97.ProBuilderUtilities.Editor
         [MenuItem(PARENT_FOLDER + CONVERT_PROBUILDER_TO_CSG, true)]
         static bool Validate_ConvertProBuilderToCSG()
             => Selection.activeTransform != null
-            && Selection.activeTransform.GetComponent<ProBuilderMesh>() != null;
+            && Selection.activeTransform.TryGetComponent<ProBuilderMesh>(out var proBuilderMesh)
+            && proBuilderMesh.faces.All(f => f.IsQuad());
 
-        private static void CreateBrushFromMesh(ProBuilderMesh proBuilderComponent, out ControlMesh controlMesh, out Shape shape)
+        static void CreateBrushFromMesh(ProBuilderMesh proBuilderComponent, out ControlMesh controlMesh, out Shape shape)
         {
             var faces = proBuilderComponent.faces;
             var sharedVertices = proBuilderComponent.sharedVertices.ToList();
@@ -80,7 +81,16 @@ namespace Terutsa97.ProBuilderUtilities.Editor
                 {
                     // TODO: Only ProBuilder Sphere works, need to fix cones and stuff.
                     if (!f.IsQuad())
-                        return new Polygon(f.indexes.ToArray(), i);
+                    {
+                        var tris = f.indexes.ToArray();
+                        var newVertexOrderTris = new int[]
+                        {
+                            tris[1],
+                            tris[2],
+                            tris[0]
+                        };
+                        return new Polygon(newVertexOrderTris, i);
+                    }
 
                     var quads = f.ToQuad();
                     var newVertexOrder = new int[]
@@ -107,6 +117,8 @@ namespace Terutsa97.ProBuilderUtilities.Editor
                     RenderMaterial = renderer.sharedMaterials[faces[i].submeshIndex],
                     Scale = -faces[i].uv.scale,
                     Translation = faces[i].uv.offset,
+                    RotationAngle = faces[i].uv.rotation,
+                    SmoothingGroup = (uint)faces[i].smoothingGroup
                 }).ToArray(),
                 TexGenFlags = polygonRange.Select(_ => CSGSettings.DefaultTexGenFlags).ToArray()
             };
@@ -123,14 +135,6 @@ namespace Terutsa97.ProBuilderUtilities.Editor
             controlMesh = mesh;
         }
 
-        /// <summary>
-        /// Gets half edges from a list of faces. Think of half edges like a set
-        /// of pointers to the next vertex. This should always be counter-clockwise
-        /// otherwise you get wrong normals.
-        /// </summary>
-        /// <param name="faces"></param>
-        /// <param name="sharedVertices"></param>
-        /// <returns></returns>
         static IList<HalfEdge> GetHalfEdges(IList<Face> faces, IList<SharedVertex> sharedVertices)
         {
             int twinIndexOffset = faces.Count * sharedVertices.Count;
@@ -171,12 +175,75 @@ namespace Terutsa97.ProBuilderUtilities.Editor
                 if (twinedEdge.Equals(default)) { continue; }
 
                 var twinedIndex = halfEdgeCollection.IndexOf(twinedEdge);
+                if (twinedIndex == -1) { continue; }
 
                 halfEdgeCollection[i] = new HalfEdge(currentEdge.PolygonIndex, twinedIndex, currentEdge.VertexIndex);
                 halfEdgeCollection[twinedIndex] = new HalfEdge(twinedEdge.PolygonIndex, i, twinedEdge.VertexIndex, false);
             }
 
             return halfEdgeCollection;
+        }
+        #endregion
+
+        #region
+        const string CONVERT_CST_TO_PROBUILDER = "Convert to Probuilder Model";
+
+        [MenuItem(PARENT_FOLDER + CONVERT_CST_TO_PROBUILDER, false, PRIORITY)]
+        public static void ConvertCSGToProBuilder(MenuCommand command)
+        {
+            var selectedObject = ((GameObject)command.context);
+            IEnumerable<Face> faces;
+
+            if (selectedObject.TryGetComponent<CSGBrush>(out var brush))
+            {
+                var vertices = brush.ControlMesh.Vertices
+                    .Select((v, i) => new Vertex()
+                    {
+                        position = v,
+                        tangent = brush.Shape.Surfaces[i / 4].Plane.ToVector4()
+                    })
+                    .ToList();
+
+                var materials = brush.Shape.TexGens
+                    .Select(t => t.RenderMaterial)
+                    .ToList();
+
+                faces = BrushToFaces(brush.ControlMesh, brush.Shape, materials);
+
+                //brush.Shape.TexGens.Select(s => s.SmoothingGroup)
+
+                Undo.IncrementCurrentGroup();
+                var gameObject = ProBuilderMesh.Create(vertices, faces.ToList(),
+                    materials: materials,
+                    sharedVertices: SharedVertex.GetSharedVerticesWithPositions(brush.ControlMesh.Vertices)
+                );
+            }
+            else if (selectedObject.TryGetComponent<CSGModel>(out var model))
+            {
+
+            }
+        }
+
+        public static IEnumerable<Face> BrushToFaces(ControlMesh controlMesh, Shape shape, List<Material> materials)
+        {
+            var vertices = new List<Vector3>(controlMesh.Vertices);
+
+            IEnumerable<int[]> verticesPerFace = controlMesh.Polygons
+                .Select(p => controlMesh.GetVertices(p.EdgeIndices))
+                .Select(p => p.Select(i => vertices.IndexOf(i)).ToArray())
+                .ToList();
+
+            return verticesPerFace.Select((v, i) => new Face(new int[6] { v[3], v[0], v[2], v[0], v[1], v[2] })
+            {
+                submeshIndex = materials.IndexOf(shape.TexGens[i].RenderMaterial),
+                uv = new AutoUnwrapSettings()
+                {
+                    offset = shape.TexGens[i].Translation,
+                    scale = shape.TexGens[i].Scale,
+                    rotation = shape.TexGens[i].RotationAngle
+                },
+                smoothingGroup = (int)shape.TexGens[i].SmoothingGroup
+            });
         }
         #endregion
     }

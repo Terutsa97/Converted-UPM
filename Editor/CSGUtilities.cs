@@ -72,5 +72,8 @@ namespace Terutsa97.ProBuilderUtilities.Editor
             tangent = Vector3.Cross(normal, tangent).normalized;
             binormal = Vector3.Cross(normal, tangent).normalized;
         }
+
+        public static Vector4 ToVector4(this CSGPlane plane)
+            => new();
     }
 }
