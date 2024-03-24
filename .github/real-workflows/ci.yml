@@ -36,3 +36,7 @@ jobs:
         env:
           PKG_ROOT: "Packages/com.terutsa97.folder-utilities"
           BRANCH_NAME: "upm-folder-utilities"
+      - <<: *split-upm-branch
+        env:
+          PKG_ROOT: "com.terutsa97.probuilder-utilities"
+          BRANCH_NAME: "upm-probuilder-utilities"
