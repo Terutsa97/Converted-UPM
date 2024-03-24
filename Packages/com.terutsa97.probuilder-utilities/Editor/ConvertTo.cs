@@ -13,8 +13,7 @@ using UnityEngine.ProBuilder;
 using System.Linq;
 
 using Shape = RealtimeCSG.Legacy.Shape;
-using UnityEngine.WSA;
-using UnityEngine.ProBuilder.Shapes;
+using static UnityEngine.ProBuilder.AutoUnwrapSettings;
 
 namespace Terutsa97.ProBuilderUtilities.Editor
 {
@@ -192,7 +191,6 @@ namespace Terutsa97.ProBuilderUtilities.Editor
         public static void ConvertCSGToProBuilder(MenuCommand command)
         {
             var selectedObject = ((GameObject)command.context);
-            IEnumerable<Face> faces;
 
             if (selectedObject.TryGetComponent<CSGBrush>(out var brush))
             {
@@ -208,23 +206,53 @@ namespace Terutsa97.ProBuilderUtilities.Editor
                     .Select(t => t.RenderMaterial)
                     .ToList();
 
-                faces = BrushToFaces(brush.ControlMesh, brush.Shape, materials);
-
-                //brush.Shape.TexGens.Select(s => s.SmoothingGroup)
+                List<Face> faces = BrushToFaces(brush.ControlMesh, brush.Shape, materials).ToList();
+                vertices = MakeVerticesUniquePerFace(faces, vertices);
 
                 Undo.IncrementCurrentGroup();
                 var gameObject = ProBuilderMesh.Create(vertices, faces.ToList(),
                     materials: materials,
-                    sharedVertices: SharedVertex.GetSharedVerticesWithPositions(brush.ControlMesh.Vertices)
+                    sharedVertices: SharedVertex.GetSharedVerticesWithPositions(vertices.Select(v => v.position).ToList())
                 );
+
+                gameObject.name = selectedObject.name;
+                gameObject.transform.position = selectedObject.transform.position;
+                Selection.activeGameObject = gameObject.gameObject;
             }
             else if (selectedObject.TryGetComponent<CSGModel>(out var model))
             {
-
+                // TODO: Work on it another daty...
+                // Look into making it generate a mesh and going from there...
             }
         }
 
-        public static IEnumerable<Face> BrushToFaces(ControlMesh controlMesh, Shape shape, List<Material> materials)
+        [MenuItem(PARENT_FOLDER + CONVERT_CST_TO_PROBUILDER, true)]
+        static bool Validate_ConvertCSGToProBuilder()
+            => Selection.activeTransform != null
+            && (Selection.activeTransform.TryGetComponent<CSGBrush>(out var _)
+            || Selection.activeTransform.TryGetComponent<CSGModel>(out var _));
+
+        static List<Vertex> MakeVerticesUniquePerFace(List<Face> faces, List<Vertex> vertices)
+        {
+            var uniqueVerticesPerFaceIndex = new List<Vertex>();
+            for (int i = 0; i < faces.Count(); i++)
+            {
+                var faceVertices = faces[i].distinctIndexes.Select(j => vertices[j]);
+
+                var currentCount = uniqueVerticesPerFaceIndex.Count();
+                uniqueVerticesPerFaceIndex.AddRange(faceVertices);
+
+                var oldIndexToNew = faceVertices.Select((v, i) => uniqueVerticesPerFaceIndex[currentCount + i])
+                    .Select((v, i) => (key: vertices.IndexOf(v), value: i))
+                    .ToDictionary(k => k.key, k => k.value + currentCount);
+
+                faces[i].SetIndexes(faces[i].indexes.Select(i => oldIndexToNew[i]));
+            }
+
+            return uniqueVerticesPerFaceIndex;
+        }
+
+        static IEnumerable<Face> BrushToFaces(ControlMesh controlMesh, Shape shape, List<Material> materials)
         {
             var vertices = new List<Vector3>(controlMesh.Vertices);
 
@@ -239,9 +267,12 @@ namespace Terutsa97.ProBuilderUtilities.Editor
                 uv = new AutoUnwrapSettings()
                 {
                     offset = shape.TexGens[i].Translation,
-                    scale = shape.TexGens[i].Scale,
-                    rotation = shape.TexGens[i].RotationAngle
+                    scale = -shape.TexGens[i].Scale,
+                    rotation = shape.TexGens[i].RotationAngle,
+                    useWorldSpace = shape.TexGenFlags[i].HasFlag(TexGenFlags.WorldSpaceTexture),
+                    fill = Fill.Fit
                 },
+                manualUV = true,
                 smoothingGroup = (int)shape.TexGens[i].SmoothingGroup
             });
         }
