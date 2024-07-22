@@ -27,6 +27,14 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.terutsa97.probuilder-utilities": {
+      "version": "file:com.terutsa97.probuilder-utilities",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.probuilder": "5.2.0"
+      }
+    },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
       "depth": 2,
