@@ -45,5 +45,5 @@ jobs:
           git subtree split -P "$PKG_ROOT" -b $BRANCH_NAME
           git push -u origin $BRANCH_NAME
         env:
-          PKG_ROOT: "com.terutsa97.probuilder-utilities"
+          PKG_ROOT: "Packages/com.terutsa97.probuilder-utilities"
           BRANCH_NAME: "upm-probuilder-utilities"
