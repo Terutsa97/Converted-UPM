@@ -7,3 +7,4 @@ Utilities for dealing with folders.
 - Create a folder based on a selection of objects
 - Merge a selection of folders together
 - Sort folder contents
+- Shift-click a folder in the project window to open in explorer

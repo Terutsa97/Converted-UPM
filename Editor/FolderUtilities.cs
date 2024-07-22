@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEditor;
+using UnityEditor.Callbacks;
 
 using UnityEngine;
 
@@ -20,10 +21,9 @@ namespace Terutsa97.FolderUtilities
         #region Convert Empty To Folder
         const string CONVERT_EMPTY_NAME = "Convert Empty To Folder";
         [MenuItem(PARENT_FOLDER + CONVERT_EMPTY_NAME, false, PRIORITY)]
-        public static void ConvertEmptyToFolder(MenuCommand command)
+        public static void ConvertEmptyToFolder()
         {
-            var selectedParent = ((GameObject)command.context).transform;
-            var childTransforms = ((GameObject)command.context).GetComponentsInChildren<Transform>();
+            var selectedParent = Selection.activeTransform;
 
             Undo.IncrementCurrentGroup();
 
@@ -40,11 +40,10 @@ namespace Terutsa97.FolderUtilities
 
             newFolder.transform.SetSiblingIndex(index);
 
-            int i = 0;
-            foreach (var child in childTransforms)
+            while (selectedParent.childCount > 0)
             {
-                Undo.SetTransformParent(child, newFolder.transform, $"Modify parent of: {child.name} {i}");
-                i++;
+                var child = selectedParent.GetChild(0);
+                Undo.SetTransformParent(child, newFolder.transform, $"Modify parent of: {child.name}");
             }
 
             newFolder.name = selectedParent.name;
@@ -66,10 +65,9 @@ namespace Terutsa97.FolderUtilities
         #region Convert Folder To Empty
         const string CONVERT_FOLDER_NAME = "Convert Folder To Empty";
         [MenuItem(PARENT_FOLDER + CONVERT_FOLDER_NAME, false, PRIORITY)]
-        public static void ConvertFolderToEmpty(MenuCommand command)
+        public static void ConvertFolderToEmpty()
         {
-            var selectedParent = ((GameObject)command.context).transform;
-            var childTransforms = ((GameObject)command.context).GetComponentsInChildren<Transform>();
+            var selectedParent = Selection.activeTransform;
 
             Undo.IncrementCurrentGroup();
 
@@ -86,11 +84,10 @@ namespace Terutsa97.FolderUtilities
 
             newEmpty.transform.SetSiblingIndex(index);
 
-            int i = 0;
-            foreach (var child in childTransforms)
+            while (selectedParent.childCount > 0)
             {
-                Undo.SetTransformParent(child, newEmpty.transform, $"Modify parent of: {child.name} {i}");
-                i++;
+                var child = selectedParent.GetChild(0);
+                Undo.SetTransformParent(child, newEmpty.transform, $"Modify parent of: {child.name}");
             }
 
             newEmpty.name = selectedParent.name;
@@ -250,6 +247,29 @@ namespace Terutsa97.FolderUtilities
             }
 
             Undo.SetCurrentGroupName("Reset Parent Transform");
+        }
+        #endregion
+
+        #region Project Window Folder utilities
+        /// <summary>
+        /// Taken from: https://www.youtube.com/watch?v=d7vsQ8AkpMY
+        /// Adds the capability to shift double click on a folder in the project window to
+        /// open it in the hierarchy
+        /// </summary>
+        /// <param name="instanceId"></param>
+        /// <returns></returns>
+        [OnOpenAsset]
+        public static bool OnOpenAsset(int instanceId)
+        {
+            Event e = Event.current;
+            if (e == null || !e.shift)
+                return false;
+
+            var obj = EditorUtility.InstanceIDToObject(instanceId);
+            string path = AssetDatabase.GetAssetPath(obj);
+            if (AssetDatabase.IsValidFolder(path)) { EditorUtility.RevealInFinder(path); }
+
+            return true;
         }
         #endregion
 
