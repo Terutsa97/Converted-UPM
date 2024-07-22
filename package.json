@@ -1,0 +1,15 @@
+{
+  "name": "com.terutsa97.editor-utilities",
+  "displayName": "Editor Utilities",
+  "description": "Shared utilities expanding the editor tooling.",
+  "version": "0.0.1",
+  "unity": "2018.3",
+  "author": {
+    "name": "Terutsa97",
+    "email": "angelspth1997@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+[URL]https://github.com/Terutsa97/Converted-UPM.git#upm-editor-utilities[/URL]"
+  }
+}
