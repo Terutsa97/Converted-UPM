@@ -15,7 +15,7 @@ namespace Terutsa97.GameObjectBrush
         #region Properties
         static BrushCollection.BrushCollectionList? s_brushCollectionList;
 
-        static string version = "v4.1.0";
+        static string version = "v4.1.1";
 
         public static Color red = ColorFromRGB(239, 80, 80);
         public static Color green = ColorFromRGB(93, 173, 57);
@@ -164,6 +164,8 @@ namespace Terutsa97.GameObjectBrush
                     EditorGUILayout.EndHorizontal();
                     return;
                 }
+
+                selectedBrushCollectionIndex %= brushCollectionList.brushCollections.Count;
 
                 brushes = brushCollectionList.brushCollections[selectedBrushCollectionIndex];
                 brushes.SetLastUsedBrushCollection();
@@ -437,7 +439,8 @@ namespace Terutsa97.GameObjectBrush
                 brushes.primarySelectedBrush.maxSlope = EditorGUILayout.FloatField(brushes.primarySelectedBrush.maxSlope);
                 EditorGUILayout.EndHorizontal();
 
-                SerializedProperty sp = serializedObject_brushObject?.FindProperty("primarySelectedBrush").FindPropertyRelative("layerFilter");
+                SerializedProperty sp = serializedObject_brushObject?.FindProperty("primarySelectedBrush")?.FindPropertyRelative("layerFilter");
+                if (sp == null) { return; }
 
                 EditorGUILayout.BeginHorizontal();
                 brushes.primarySelectedBrush.isTagFilteringEnabled = EditorGUILayout.Toggle("Enable Tag Filtering", brushes.primarySelectedBrush.isTagFilteringEnabled);

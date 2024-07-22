@@ -1,11 +1,17 @@
 {
   "dependencies": {
     "com.prenominal.realtimecsg": {
-      "version": "https://github.com/LogicalError/realtime-CSG-for-unity.git",
+      "version": "https://github.com/SixParQuatre/realtime-CSG-for-unity.git#EditMode-OverlayTab",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "9a39f85a198b9cbcb2fcb06e671ae10a9d51cf4e"
+      "hash": "27185ab3eb510668f63352b2f76721d4f69a5f0a"
+    },
+    "com.terutsa97.editor-utilities": {
+      "version": "file:com.terutsa97.editor-utilities",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.terutsa97.folder-utilities": {
       "version": "file:com.terutsa97.folder-utilities",
@@ -81,7 +87,7 @@
       "dependencies": {
         "com.unity.settings-manager": "1.0.1"
       },
-      "hash": "0815a8037c4262926343faf01a4be00d562c5dd4"
+      "hash": "0dbbc046cb8b20ca237d9714c7aaac6be6a448f9"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

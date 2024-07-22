@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.prenominal.realtimecsg": "https://github.com/LogicalError/realtime-CSG-for-unity.git",
+    "com.prenominal.realtimecsg": "https://github.com/SixParQuatre/realtime-CSG-for-unity.git#EditMode-OverlayTab",
     "com.unity.ide.visualstudio": "2.0.22",
     "com.unity.probuilder": "5.2.2",
     "com.xsduan.hierarchy-folders": "https://github.com/xsduan/unity-hierarchy-folders.git",
